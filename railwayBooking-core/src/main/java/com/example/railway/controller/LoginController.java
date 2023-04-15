@@ -16,12 +16,12 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 	
-	@PostMapping("/authenticate")
+	@GetMapping("/authenticate")
 	public int login(@RequestBody User user) throws Exception {
 		System.out.println("im in controller");
 		int result;
 		result=loginService.authenticate(user);
-		return result+7;
+		return result;
 	}
 	
 	

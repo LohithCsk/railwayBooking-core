@@ -12,14 +12,15 @@ import com.example.railway.model.User;
 
 @Service
 public class LoginService {
-	private static final String DB_URL="dbc:mysql://localhost:3306/railway_project";
+	private static final String DB_URL="jdbc:mysql://localhost:3306/railway";
 	private static final String DB_USERNAME="root";
-	private static final String DB_PASSWORD="Bhargav@0405";
+	private static final String DB_PASSWORD="Peru.csk9130";
 	public int authenticate(User user) throws Exception {
 		if(user.getUsername()!=null && user.getPassword()!=null) {
 			String username=user.getUsername();
 			String password=user.getPassword();
 			try {
+				
 				Connection connection=DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 				
 				String query = "SELECT * from users where username = ? and password =?";
