@@ -24,5 +24,13 @@ public class LoginController {
 		return result;
 	}
 	
+	@PostMapping("/createUser")
+	public User createUser(@RequestBody User user) throws Exception {
+		//System.out.println("im in controller");
+		User result;
+		result=loginService.createUser(user);
+		return result;
+	}
+	
 	
 }

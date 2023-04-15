@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "BIGINT(20) AUTO_INCREMENT=900")
     private Long id;
     
     @Column(nullable = false)

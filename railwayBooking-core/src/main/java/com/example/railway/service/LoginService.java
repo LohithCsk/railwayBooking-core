@@ -6,38 +6,54 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.example.railway.model.User;
+import com.example.railway.repository.LoginRepository;
 
 @Service
+
 public class LoginService {
-	private static final String DB_URL="jdbc:mysql://localhost:3306/railway";
-	private static final String DB_USERNAME="root";
-	private static final String DB_PASSWORD="Peru.csk9130";
+	@Value("${spring.datasource.url}")
+    private String dbUrl;
+	@Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+	@Autowired
+	private LoginRepository loginRepository;
+	@Autowired
+    private static Environment environment;
+	
+	
 	public int authenticate(User user) throws Exception {
 		if(user.getUsername()!=null && user.getPassword()!=null) {
 			String username=user.getUsername();
 			String password=user.getPassword();
 			try {
-				
-				Connection connection=DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-				
+
+				Connection connection=DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+
 				String query = "SELECT * from users where username = ? and password =?";
 				PreparedStatement stmt = connection.prepareStatement(query);
-				
+
 				stmt.setString(1, username);
 				stmt.setString(2, password);
-				
+
 				ResultSet result = stmt.executeQuery();
-				
+
 				if(result.next()) {
 					result.close();
 					stmt.close();
 					connection.close();
 					return 1;
 				}
-				
+
 				result.close();
 				stmt.close();
 				connection.close();
@@ -45,13 +61,55 @@ public class LoginService {
 				// TODO: handle exception
 				e.printStackTrace();
 			}
-			
+
 		}
 		else {
 			throw new Exception("User object is null");
 		}
 		return 	0;
-				
+
+	}
+
+	public User createUser(User user)throws Exception {
+		User newUser=new User();
+		if(user!=null) {
+			
+			try {
+				Connection connection=DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+				String query = "SELECT * from users where email=?";
+				PreparedStatement stmt = connection.prepareStatement(query);
+
+				stmt.setString(1, user.getEmail());
+				ResultSet result = stmt.executeQuery();
+
+				if(result.next()) {
+					result.close();
+					stmt.close();
+					connection.close();
+					throw new Exception("user with this email already exists");
+				}
+				else {
+					newUser.setEmail(user.getEmail());
+					newUser.setPassword(user.getPassword());
+					newUser.setUsername(user.getUsername());
+					newUser.setUserType(user.getUserType());
+					loginRepository.save(newUser);
+					result.close();
+					stmt.close();
+					connection.close();
+					return newUser;
+					
+				}
+
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return newUser;
+		
+		
+
 	}
 
 }

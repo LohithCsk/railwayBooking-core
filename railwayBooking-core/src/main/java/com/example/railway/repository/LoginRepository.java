@@ -9,5 +9,5 @@ import com.sun.mail.imap.protocol.ID;
 @Repository
 public interface LoginRepository extends JpaRepository<User, String>{
 	
-	//public void authenticate(User user);
+	User save(User user);
 }
